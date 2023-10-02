@@ -1,0 +1,34 @@
+import { prisma } from "~~/prisma/db";
+
+
+
+export default defineEventHandler(async (event)=>{
+    const response = {};
+    
+    try {
+        const { title, description, department, hiring_manager, deadline, job_type, experience, salary, location, views, status } = await readBody(event);
+        const createJobPost = await prisma.jobPostings.create({
+            data: {
+                title: title,
+                description: description,
+                department: department,
+                hiring_manager: hiring_manager,
+                deadline: deadline,
+                job_type: job_type,
+                experience: Number(experience),
+                salary: Number(salary),
+                location: location,
+                views: views
+            },
+        })
+
+        response['post'] = createJobPost
+        response['success'] = true
+    } catch (error) {
+        response['success'] = false
+        response['message'] = error.toString()
+    }
+
+    return response;
+})
+    
